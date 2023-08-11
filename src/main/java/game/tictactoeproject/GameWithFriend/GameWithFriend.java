@@ -35,6 +35,31 @@ public class GameWithFriend extends Application {
     private int player1Score = 0;
     private int player2Score = 0;
 
+    private void resetGame(Button[][] buttons) {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = '\u0000';
+                buttons[i][j].setText(" ");
+            }
+        }
+        currentPlayer = player1;
+        gameOver = false;
+        turnLabel.setText("Гравець 1, твій хід.");
+    }
+    public GameState getGameState(char[][] board) {
+        if (GameLogic.checkWinner(board)) {
+            if(currentPlayer.getSign() == 'X') {
+                return GameState.X_WON;
+            } else {
+                return GameState.O_WON;
+            }
+
+        } else if (GameLogic.isDraw(board)) {
+            return GameState.DRAW;
+        } else {
+            return GameState.IN_PROGRESS;
+        }
+    }
     @Override
     public void start(Stage primaryStage) {
         GridPane grid = new GridPane();
@@ -153,29 +178,4 @@ public class GameWithFriend extends Application {
         primaryStage.show();
     }
 
-    private void resetGame(Button[][] buttons) {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                board[i][j] = '\u0000';
-                buttons[i][j].setText(" ");
-            }
-        }
-        currentPlayer = player1;
-        gameOver = false;
-        turnLabel.setText("Гравець 1, твій хід.");
-    }
-    public GameState getGameState(char[][] board) {
-        if (GameLogic.checkWinner(board)) {
-            if(currentPlayer.getSign() == 'X') {
-                return GameState.X_WON;
-            } else {
-                return GameState.O_WON;
-            }
-
-        } else if (GameLogic.isDraw(board)) {
-            return GameState.DRAW;
-        } else {
-            return GameState.IN_PROGRESS;
-        }
-    }
 }
