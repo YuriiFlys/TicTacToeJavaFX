@@ -2,15 +2,13 @@ package game.tictactoeproject;
 
 import game.tictactoeproject.GameWithAI.MenuWithAI;
 import game.tictactoeproject.GameWithFriend.GameWithFriend;
-import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.*;
+import javafx.stage.*;
 
 public class TicTacToe extends Application {
     private boolean isDarkTheme = false;
