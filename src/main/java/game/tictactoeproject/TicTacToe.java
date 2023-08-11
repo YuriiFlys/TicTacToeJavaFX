@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 public class TicTacToe extends Application {
     private boolean isDarkTheme = false;
     public void start(Stage primaryStage) {
+        primaryStage.setTitle("Хрестики - нулики");
         Label titleLabel = new Label("Хрестики - нулики");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
         Button playWithAIButton = new Button("Гра з ботом");
