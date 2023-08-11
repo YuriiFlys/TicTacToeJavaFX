@@ -3,6 +3,7 @@ package game.tictactoeproject.GameWithAI;
 import game.tictactoeproject.Logic.GameLogic;
 import game.tictactoeproject.Logic.Player;
 import game.tictactoeproject.Logic.GameState;
+import javafx.animation.Animation;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,22 +16,29 @@ import javafx.scene.text.FontWeight;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.BorderPane;
+import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
+import javafx.animation.KeyFrame;
 public class HardGame extends Application {
 
     private Scene menuScene;
     Player player = new Player("Гравець", 'X');
     Player computer = new Player("Бот", 'O');
     private boolean isDarkTheme;
+    boolean isBotTurn = false;
     public HardGame(Scene menuScene, boolean isDarkTheme) {
         this.menuScene = menuScene;
         this.isDarkTheme = isDarkTheme;
     }
     Player currentPlayer = player;
+    Timeline timeline = new Timeline();
     private char[][] board = new char[3][3];
 
     private boolean gameOver = false;
     private int playerScore = 0;
     private int computerScore = 0;
+    PauseTransition pause = new PauseTransition(Duration.seconds(3));
     private Label statusLabel = new Label("Твій хід.");
     private Label playerScoreLabel = new Label("Гравець: 0");
     private Label computerScoreLabel = new Label("Бот: 0");
@@ -98,7 +106,7 @@ public class HardGame extends Application {
                 int finalJ = j;
 
                 button.setOnAction(event -> {
-                    if (!gameOver && board[finalI][finalJ] == '\u0000') {
+                    if (!gameOver && board[finalI][finalJ] == '\u0000' && !isBotTurn) {
                         button.setText(String.valueOf(currentPlayer.getSign()));
                         board[finalI][finalJ] = currentPlayer.getSign();
                         if(isDarkTheme){
@@ -120,45 +128,63 @@ public class HardGame extends Application {
                         } else {
                             currentPlayer = (currentPlayer == player)? computer : player;
                             if (currentPlayer.getSign() == 'O') {
-                                int bestScore = Integer.MIN_VALUE;
-                                int bestMoveI = -1;
-                                int bestMoveJ = -1;
-                                for (int k = 0; k < 3; k++) {
-                                    for (int l = 0; l < 3; l++) {
-                                        if (board[k][l] == '\u0000') {
-                                            board[k][l] = currentPlayer.getSign();
-                                            int score = minimax(board, false, currentPlayer);
-                                            board[k][l] = '\u0000';
-                                            if (score > bestScore) {
-                                                bestScore = score;
-                                                bestMoveI = k;
-                                                bestMoveJ = l;
+                                isBotTurn = true;
+                                timeline.getKeyFrames().addAll(
+                                        new KeyFrame(Duration.seconds(0), event1 -> statusLabel.setText("Бот думає.")),
+                                        new KeyFrame(Duration.seconds(0.5), event1 -> statusLabel.setText("Бот думає..")),
+                                        new KeyFrame(Duration.seconds(1), event1 -> statusLabel.setText("Бот думає...")),
+                                        new KeyFrame(Duration.seconds(1.5), event1 -> statusLabel.setText("Бот думає."))
+                                );
+                                timeline.setCycleCount(Animation.INDEFINITE);
+                                timeline.play();
+                                pause.setOnFinished(event1 -> {
+                                    // Тут розміщуємо код, який буде виконаний після закінчення затримки
+                                    // Наприклад, хід бота
+                                    int bestScore = Integer.MIN_VALUE;
+                                    int bestMoveI = -1;
+                                    int bestMoveJ = -1;
+                                    for (int k = 0; k < 3; k++) {
+                                        for (int l = 0; l < 3; l++) {
+                                            if (board[k][l] == '\u0000') {
+                                                board[k][l] = currentPlayer.getSign();
+                                                int score = minimax(board, false, currentPlayer);
+                                                board[k][l] = '\u0000';
+                                                if (score > bestScore) {
+                                                    bestScore = score;
+                                                    bestMoveI = k;
+                                                    bestMoveJ = l;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                board[bestMoveI][bestMoveJ] = currentPlayer.getSign();
-                                buttons[bestMoveI][bestMoveJ].setText(String.valueOf(currentPlayer.getSign()));
-                                if(isDarkTheme){
-                                    buttons[bestMoveI][bestMoveJ].setStyle("-fx-text-fill: blue;-fx-background-color: black;-fx-border-color: white");
-                                }
-                                if (getGameState(board)==GameState.X_WON || getGameState(board)==GameState.O_WON) {
-                                    statusLabel.setText(currentPlayer.getName() + " переміг!");
-                                    if (currentPlayer.getSign() == 'X') {
-                                        playerScore++;
-                                        playerScoreLabel.setText("Гравець: " + playerScore);
-                                    } else {
-                                        computerScore++;
-                                        computerScoreLabel.setText("Бот: " + computerScore);
+                                    board[bestMoveI][bestMoveJ] = currentPlayer.getSign();
+                                    buttons[bestMoveI][bestMoveJ].setText(String.valueOf(currentPlayer.getSign()));
+                                    timeline.stop();
+                                    if(isDarkTheme){
+                                        buttons[bestMoveI][bestMoveJ].setStyle("-fx-text-fill: blue;-fx-background-color: black;-fx-border-color: white");
                                     }
-                                    gameOver = true;
-                                } else if (getGameState(board)==GameState.DRAW) {
-                                    statusLabel.setText("Нічия!");
-                                    gameOver = true;
-                                } else {
-                                    currentPlayer = (currentPlayer == player)? computer : player;
-                                    statusLabel.setText("Бот зробив хід, тепер твоя черга.");
-                                }
+                                    if (getGameState(board)==GameState.X_WON || getGameState(board)==GameState.O_WON) {
+                                        statusLabel.setText(currentPlayer.getName() + " переміг!");
+                                        if (currentPlayer.getSign() == 'X') {
+                                            playerScore++;
+                                            playerScoreLabel.setText("Гравець: " + playerScore);
+                                        } else {
+                                            computerScore++;
+                                            computerScoreLabel.setText("Бот: " + computerScore);
+                                        }
+                                        gameOver = true;
+                                    } else if (getGameState(board)==GameState.DRAW) {
+                                        statusLabel.setText("Нічия!");
+                                        gameOver = true;
+                                    } else {
+                                        currentPlayer = (currentPlayer == player)? computer : player;
+                                        statusLabel.setText("Бот зробив хід, тепер твоя черга.");
+                                        isBotTurn = false;
+                                    }
+                                });
+
+                                // Запускаємо анімацію затримки
+                                pause.play();
                             }
                         }
                     }
