@@ -1,19 +1,15 @@
 package game.tictactoeproject.GameWithFriend;
-import game.tictactoeproject.Logic.GameLogic;
 import game.tictactoeproject.Logic.GameState;
+import game.tictactoeproject.Logic.GameLogic;
 import game.tictactoeproject.Logic.Player;
-import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.stage.Stage;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.*;
+import javafx.stage.*;
+
 
 
 public class GameWithFriend extends Application {
@@ -82,13 +78,13 @@ public class GameWithFriend extends Application {
                             button.setStyle("-fx-text-fill: blue;-fx-background-color: black;-fx-border-color: white");
                         }
 
-                        if (getGameState(board) == GameState.X_WON) {
+                        if (getGameState(board) == GameState.X_WON || getGameState(board) == GameState.O_WON) {
                             turnLabel.setText(currentPlayer.getName() + " переміг!");
                             if (currentPlayer.getSign() == 'X') {
                                 player1Score++;
                                 player1ScoreLabel.setText("Гравець 1: " + player1Score);
 
-                            } else if (getGameState(board) == GameState.O_WON) {
+                            } else {
                                 player2Score++;
                                 player2ScoreLabel.setText("Гравець 2: " + player2Score);
                             }
