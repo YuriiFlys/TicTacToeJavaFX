@@ -1,25 +1,18 @@
 package game.tictactoeproject.GameWithAI;
 
+import game.tictactoeproject.Logic.GameState;
 import game.tictactoeproject.Logic.GameLogic;
 import game.tictactoeproject.Logic.Player;
-import game.tictactoeproject.Logic.GameState;
-import javafx.animation.Animation;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.BorderPane;
-import javafx.animation.PauseTransition;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
-import javafx.animation.KeyFrame;
+import javafx.application.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.text.*;
+import javafx.stage.*;
+import javafx.animation.*;
+import javafx.util.*;
+
 public class HardGame extends Application {
 
     private Scene menuScene;
