@@ -66,8 +66,6 @@ public class TicTacToe extends Application {
         primaryStage.setScene(menuScene);
         primaryStage.show();
     }
-
-
     public static void main(String[] args) {
         launch(args);
     }
