@@ -28,7 +28,6 @@ public class TicTacToe extends Application {
     Image background_white = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_white.jpg");
     Image background_black = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_black.jpg");
 
-
     MediaPlayer mediaPlayer = new MediaPlayer(soundTrack);
     MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
     DropShadow shadow = new DropShadow();
