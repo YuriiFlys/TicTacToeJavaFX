@@ -2,17 +2,39 @@ package game.tictactoeproject.GameWithFriend;
 import game.tictactoeproject.Logic.GameState;
 import game.tictactoeproject.Logic.GameLogic;
 import game.tictactoeproject.Logic.Player;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.*;
 import javafx.stage.*;
+import javafx.util.Duration;
 
+import java.io.File;
 
 
 public class GameWithFriend extends Application {
+    String pathToSoundClick = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\click.mp3";
+    Media soundClick = new Media(new File(pathToSoundClick).toURI().toString());
+    MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
+    Image background_white = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_white.jpg");
+    Image background_black = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_black.jpg");
+    // Create new ImageView objects with the background images
+    ImageView backgroundImageView = new ImageView(background_white);
+    ImageView backgroundImageView1 = new ImageView(background_black);
+
+    // Create a new GaussianBlur effect with the desired radius
+    GaussianBlur blurEffect = new GaussianBlur(25);
     private Scene aiMenuScene;
     private boolean isDarkTheme;
     public GameWithFriend(Scene aiMenuScene, boolean isDarkTheme) {
@@ -24,6 +46,7 @@ public class GameWithFriend extends Application {
     Player player2 = new Player("Гравець 2", 'O');
     Player currentPlayer = player1;
     private boolean gameOver = false;
+    DropShadow shadow = new DropShadow();
 
     private Label turnLabel = new Label(currentPlayer.getName() + ", твій хід.");
     private Label player1ScoreLabel = new Label("Гравець 1: 0");
@@ -64,7 +87,8 @@ public class GameWithFriend extends Application {
             for (int j = 0; j < 3; j++) {
                 Button button = new Button(" ");
                 button.setMinSize(200, 200);
-                button.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+                button.setFont(Font.font("Arial", FontWeight.BOLD, 72));
+                button.setEffect(shadow);
                 int finalI = i;
                 int finalJ = j;
                 button.setOnAction(event -> {
@@ -72,9 +96,11 @@ public class GameWithFriend extends Application {
                         button.setText(String.valueOf(currentPlayer.getSign()));
                         board[finalI][finalJ] = currentPlayer.getSign();
                         if(isDarkTheme && currentPlayer.getSign() == 'X'){
+                            button.setEffect(new Glow(2));
                             button.setStyle("-fx-text-fill: red;-fx-background-color: black;-fx-border-color: white");
                         }
                         else if(isDarkTheme && currentPlayer.getSign() == 'O'){
+                            button.setEffect(new Glow(2));
                             button.setStyle("-fx-text-fill: blue;-fx-background-color: black;-fx-border-color: white");
                         }
 
@@ -106,17 +132,33 @@ public class GameWithFriend extends Application {
         resetButton.setMinWidth(200);
         resetButton.setMinHeight(50);
         resetButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        resetButton.setOnAction(event -> resetGame(buttons));
+        resetButton.setOnAction(event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
+            resetGame(buttons);
+        });
 
         Button resetScoreButton = new Button("Обнулення");
         resetScoreButton.setMinWidth(200);
         resetScoreButton.setMinHeight(50);
         resetScoreButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         resetScoreButton.setOnAction(event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
             player1Score = 0;
             player2Score = 0;
-            player1ScoreLabel.setText("Player 1: " + player1Score);
-            player2ScoreLabel.setText("Player 2: " + player2Score);
+            player1ScoreLabel.setText("Гравець 1: " + player1Score);
+            player2ScoreLabel.setText("Гравець 2: " + player2Score);
         });
 
         Button backButton = new Button("Назад");
@@ -124,9 +166,18 @@ public class GameWithFriend extends Application {
         backButton.setMinHeight(50);
         backButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         backButton.setOnAction(event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
             primaryStage.setScene(aiMenuScene);
             primaryStage.show();
         });
+
+
 
         Label titleLabel = new Label("Хрестики-нулики");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
@@ -146,12 +197,19 @@ public class GameWithFriend extends Application {
         gameBox.setSpacing(30);
         gameBox.getChildren().addAll(grid);
 
-        BorderPane root = new BorderPane();
-        root.setTop(infoBox);
-        root.setCenter(gameBox);
-        Scene scene = new Scene(root, 700, 950);
+        BorderPane border = new BorderPane();
+        BorderPane.setMargin(gameBox, new Insets(10, 0, 0, 0));
+        border.setTop(infoBox);
+        border.setCenter(gameBox);
+
+        backgroundImageView.setEffect(blurEffect);
+        backgroundImageView1.setEffect(blurEffect);
+
+        StackPane root = new StackPane(backgroundImageView, border);
+
+        Scene scene = new Scene(root, 740, 960);
         if (isDarkTheme) {
-            scene.getRoot().setStyle("-fx-background-color: black");
+            root.getChildren().setAll(backgroundImageView1, border);
             titleLabel.setStyle("-fx-text-fill: white");
             turnLabel.setStyle("-fx-text-fill: white");
             player1ScoreLabel.setStyle("-fx-text-fill: white");
@@ -167,6 +225,9 @@ public class GameWithFriend extends Application {
             }
         }
 
+        backButton.setEffect(shadow);
+        resetButton.setEffect(shadow);
+        resetScoreButton.setEffect(shadow);
 
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(650);

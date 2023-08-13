@@ -7,14 +7,39 @@ import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.effect.Glow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.animation.*;
 import javafx.util.*;
 
-public class HardGame extends Application {
+import java.io.File;
 
+public class HardGame extends Application {
+    String pathToSoundTrack = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\Soundtrack.mp3";
+    String pathToSoundClick = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\click.mp3";
+
+    Image background_white = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_white.jpg");
+    Image background_black = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_black.jpg");
+    // Create new ImageView objects with the background images
+    ImageView backgroundImageView = new ImageView(background_white);
+    ImageView backgroundImageView1 = new ImageView(background_black);
+
+    // Create a new GaussianBlur effect with the desired radius
+    GaussianBlur blurEffect = new GaussianBlur(25);
+    Media soundTrack = new Media(new File(pathToSoundTrack).toURI().toString());
+    Media soundClick = new Media(new File(pathToSoundClick).toURI().toString());
+
+    MediaPlayer mediaPlayer = new MediaPlayer(soundTrack);
+    MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
+    DropShadow shadow = new DropShadow();
     private Scene menuScene;
     Player player = new Player("Гравець", 'X');
     Player computer = new Player("Бот", 'O');
@@ -25,7 +50,7 @@ public class HardGame extends Application {
         this.isDarkTheme = isDarkTheme;
     }
     Player currentPlayer = player;
-    Timeline timeline = new Timeline();
+    Timeline timeline1 = new Timeline();
     private char[][] board = new char[3][3];
 
     private boolean gameOver = false;
@@ -44,6 +69,7 @@ public class HardGame extends Application {
         }
         currentPlayer = player;
         gameOver = false;
+        isBotTurn = false;
         statusLabel.setText("Твій хід.");
     }
 
@@ -94,15 +120,24 @@ public class HardGame extends Application {
             for (int j = 0; j < 3; j++) {
                 Button button = new Button(" ");
                 button.setMinSize(200, 200);
-                button.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+                button.setFont(Font.font("Arial", FontWeight.BOLD, 72));
+                button.setEffect(shadow);
                 int finalI = i;
                 int finalJ = j;
 
                 button.setOnAction(event -> {
                     if (!gameOver && board[finalI][finalJ] == '\u0000' && !isBotTurn) {
+                        mediaPlayerClick.setVolume(0.2);
+                        mediaPlayerClick.stop();
+                        mediaPlayerClick.play();
+                        Timeline timeline = new Timeline(new KeyFrame(
+                                Duration.millis(1),
+                                ae -> mediaPlayerClick.play()));
+                        timeline.play();
                         button.setText(String.valueOf(currentPlayer.getSign()));
                         board[finalI][finalJ] = currentPlayer.getSign();
                         if(isDarkTheme){
+                            button.setEffect(new Glow(2));
                             button.setStyle("-fx-text-fill: red;-fx-background-color: black;-fx-border-color: white");
                         }
                         if (getGameState(board)==GameState.X_WON || getGameState(board)==GameState.O_WON) {
@@ -122,14 +157,14 @@ public class HardGame extends Application {
                             currentPlayer = (currentPlayer == player)? computer : player;
                             if (currentPlayer.getSign() == 'O') {
                                 isBotTurn = true;
-                                timeline.getKeyFrames().addAll(
+                                timeline1.getKeyFrames().addAll(
                                         new KeyFrame(Duration.seconds(0), event1 -> statusLabel.setText("Бот думає.")),
                                         new KeyFrame(Duration.seconds(0.5), event1 -> statusLabel.setText("Бот думає..")),
                                         new KeyFrame(Duration.seconds(1), event1 -> statusLabel.setText("Бот думає...")),
                                         new KeyFrame(Duration.seconds(1.5), event1 -> statusLabel.setText("Бот думає."))
                                 );
-                                timeline.setCycleCount(Animation.INDEFINITE);
-                                timeline.play();
+                                timeline1.setCycleCount(Animation.INDEFINITE);
+                                timeline1.play();
                                 pause.setOnFinished(event1 -> {
                                     // Тут розміщуємо код, який буде виконаний після закінчення затримки
                                     // Наприклад, хід бота
@@ -150,10 +185,18 @@ public class HardGame extends Application {
                                             }
                                         }
                                     }
+                                    mediaPlayerClick.setVolume(0.2);
+                                    mediaPlayerClick.stop();
+                                    mediaPlayerClick.play();
+                                    Timeline timeline2 = new Timeline(new KeyFrame(
+                                            Duration.millis(1),
+                                            ae -> mediaPlayerClick.play()));
+                                    timeline2.play();
                                     board[bestMoveI][bestMoveJ] = currentPlayer.getSign();
                                     buttons[bestMoveI][bestMoveJ].setText(String.valueOf(currentPlayer.getSign()));
-                                    timeline.stop();
+                                    timeline1.stop();
                                     if(isDarkTheme){
+                                        buttons[bestMoveI][bestMoveJ].setEffect(new Glow(2));
                                         buttons[bestMoveI][bestMoveJ].setStyle("-fx-text-fill: blue;-fx-background-color: black;-fx-border-color: white");
                                     }
                                     if (getGameState(board)==GameState.X_WON || getGameState(board)==GameState.O_WON) {
@@ -190,13 +233,29 @@ public class HardGame extends Application {
         resetButton.setMinWidth(200);
         resetButton.setMinHeight(50);
         resetButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        resetButton.setOnAction(event -> resetGame(buttons));
+        resetButton.setOnAction(event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
+                    resetGame(buttons);
+                });
 
         Button resetScoreButton = new Button("Обнулення");
         resetScoreButton.setMinWidth(200);
         resetScoreButton.setMinHeight(50);
         resetScoreButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         resetScoreButton.setOnAction(event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
             playerScore = 0;
             computerScore = 0;
             playerScoreLabel.setText("Гравець: " + playerScore);
@@ -208,6 +267,13 @@ public class HardGame extends Application {
         backButton.setMinHeight(50);
         backButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
         backButton.setOnAction(event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
             primaryStage.setScene(menuScene);
             primaryStage.show();
         });
@@ -230,14 +296,19 @@ public class HardGame extends Application {
         gameBox.setSpacing(30);
         gameBox.getChildren().addAll(grid);
 
-        BorderPane root = new BorderPane();
-        root.setTop(infoBox);
-        root.setCenter(gameBox);
+        BorderPane border = new BorderPane();
+        BorderPane.setMargin(gameBox, new Insets(10, 0, 0, 0));
+        border.setTop(infoBox);
+        border.setCenter(gameBox);
 
-        Scene scene = new Scene(root, 700, 950);
+        backgroundImageView.setEffect(blurEffect);
+        backgroundImageView1.setEffect(blurEffect);
 
+        StackPane root = new StackPane(backgroundImageView, border);
+
+        Scene scene = new Scene(root, 740, 960);
         if (isDarkTheme) {
-            scene.getRoot().setStyle("-fx-background-color: black");
+            root.getChildren().setAll(backgroundImageView1, border);
             titleLabel.setStyle("-fx-text-fill: white");
             statusLabel.setStyle("-fx-text-fill: white");
             playerScoreLabel.setStyle("-fx-text-fill: white");
@@ -252,6 +323,10 @@ public class HardGame extends Application {
                 }
             }
         }
+
+        resetButton.setEffect(shadow);
+        resetScoreButton.setEffect(shadow);
+        backButton.setEffect(shadow);
 
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(650);
