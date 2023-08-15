@@ -24,35 +24,29 @@ import javafx.scene.media.*;
 public class EasyGame extends Application {
     Player player = new Player("Гравець", 'X');
     Player computer = new Player("Бот", 'O');
-    private Scene aiMenuScene;
-    String pathToSoundTrack = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\Soundtrack.mp3";
+    private final Scene aiMenuScene;
     String pathToSoundClick = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\click.mp3";
-    Media soundTrack = new Media(new File(pathToSoundTrack).toURI().toString());
     Media soundClick = new Media(new File(pathToSoundClick).toURI().toString());
     Image background_white = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_white.jpg");
     Image background_black = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_black.jpg");
-    // Create new ImageView objects with the background images
     ImageView backgroundImageView = new ImageView(background_white);
     ImageView backgroundImageView1 = new ImageView(background_black);
-
-    // Create a new GaussianBlur effect with the desired radius
     GaussianBlur blurEffect = new GaussianBlur(25);
 
-    MediaPlayer mediaPlayer = new MediaPlayer(soundTrack);
     MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
-    private boolean isDarkTheme;
+    private final boolean isDarkTheme;
     public EasyGame(Scene aiMenuScene, boolean isDarkTheme) {
         this.aiMenuScene = aiMenuScene;
         this.isDarkTheme = isDarkTheme;
     }
 
-    private char[][] board = new char[3][3];
+    private final char[][] board = new char[3][3];
     Player currentPlayer = player;
     private boolean gameOver = false;
     boolean isBotTurn = false;
-    private Label statusLabel = new Label("Твій хід.");
-    private Label playerScoreLabel = new Label("Гравець: 0");
-    private Label computerScoreLabel = new Label("Бот: 0");
+    private final Label statusLabel = new Label("Твій хід.");
+    private final Label playerScoreLabel = new Label("Гравець: 0");
+    private final Label computerScoreLabel = new Label("Бот: 0");
     private int playerScore = 0;
     DropShadow shadow = new DropShadow();
     PauseTransition pause = new PauseTransition(Duration.seconds(3));

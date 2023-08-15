@@ -15,7 +15,6 @@ import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.scene.media.*;
 import javafx.util.Duration;
-
 import java.io.File;
 
 public class TicTacToe extends Application {
@@ -54,11 +53,16 @@ public class TicTacToe extends Application {
         themeButton.setMinHeight(50);
         themeButton.setFont(Font.font("Arial", FontWeight.BOLD, 22));
         Button languageButton = new Button("Змінити мову");
-
+        Label projectLabel = new Label("Project by Yurii Flys");
+        projectLabel.setFont(Font.font("Arial", FontWeight.BOLD, 15));
+        projectLabel.setStyle("-fx-text-fill: black");
+        projectLabel.setEffect(shadow);
         VBox menuBox = new VBox();
         menuBox.setAlignment(Pos.CENTER);
         menuBox.setSpacing(10);
-        menuBox.getChildren().addAll(titleLabel, playWithAIButton,playWithFriend, themeButton);
+        menuBox.getChildren().addAll(titleLabel, playWithAIButton,playWithFriend, themeButton,projectLabel);
+
+
 
         Scene menuScene = new Scene(menuBox, 700, 600);
         BackgroundImage background = new BackgroundImage(
@@ -110,6 +114,7 @@ public class TicTacToe extends Application {
             timeline.play();
             if (isDarkTheme) {
                 titleLabel.setEffect(shadow);
+                projectLabel.setEffect(shadow);
                 menuBox.setBackground(new Background(background));
                 titleLabel.setStyle("-fx-text-fill: black");
                 playWithAIButton.setStyle("-fx-text-fill: black");
@@ -119,8 +124,10 @@ public class TicTacToe extends Application {
                 isDarkTheme = false;
             } else {
                 titleLabel.setEffect(shadow);
+                projectLabel.setEffect(shadow);
                 menuBox.setBackground(new Background(background1));
                 titleLabel.setStyle("-fx-text-fill: white");
+                projectLabel.setStyle("-fx-text-fill: white");
                 playWithAIButton.setStyle("-fx-text-fill: white;-fx-background-color: black;-fx-border-color: white");
                 playWithFriend.setStyle("-fx-text-fill: white;-fx-background-color: black;-fx-border-color: white");
                 themeButton.setStyle("-fx-text-fill: white;-fx-background-color: black;-fx-border-color: white");
@@ -130,7 +137,6 @@ public class TicTacToe extends Application {
         playWithAIButton.setEffect(shadow);
         playWithFriend.setEffect(shadow);
         themeButton.setEffect(shadow);
-        languageButton.setEffect(shadow);
         primaryStage.setScene(menuScene);
         primaryStage.show();
     }

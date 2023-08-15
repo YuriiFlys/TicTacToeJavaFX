@@ -29,28 +29,25 @@ public class GameWithFriend extends Application {
     MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
     Image background_white = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_white.jpg");
     Image background_black = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_black.jpg");
-    // Create new ImageView objects with the background images
     ImageView backgroundImageView = new ImageView(background_white);
     ImageView backgroundImageView1 = new ImageView(background_black);
-
-    // Create a new GaussianBlur effect with the desired radius
     GaussianBlur blurEffect = new GaussianBlur(25);
-    private Scene aiMenuScene;
-    private boolean isDarkTheme;
+    private final Scene aiMenuScene;
+    private final boolean isDarkTheme;
     public GameWithFriend(Scene aiMenuScene, boolean isDarkTheme) {
         this.aiMenuScene = aiMenuScene;
         this.isDarkTheme = isDarkTheme;
     }
-    private char[][] board = new char[3][3];
+    private final char[][] board = new char[3][3];
     Player player1 = new Player("Гравець 1", 'X');
     Player player2 = new Player("Гравець 2", 'O');
     Player currentPlayer = player1;
     private boolean gameOver = false;
     DropShadow shadow = new DropShadow();
 
-    private Label turnLabel = new Label(currentPlayer.getName() + ", твій хід.");
-    private Label player1ScoreLabel = new Label("Гравець 1: 0");
-    private Label player2ScoreLabel = new Label("Гравець 2: 0");
+    private final Label turnLabel = new Label(currentPlayer.getName() + ", твій хід.");
+    private final Label player1ScoreLabel = new Label("Гравець 1: 0");
+    private final Label player2ScoreLabel = new Label("Гравець 2: 0");
     private int player1Score = 0;
     private int player2Score = 0;
 

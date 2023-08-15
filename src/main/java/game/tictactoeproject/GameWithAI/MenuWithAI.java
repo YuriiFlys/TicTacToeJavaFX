@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.media.Media;
@@ -17,17 +16,14 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class MenuWithAI extends Application {
-    String pathToSoundTrack = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\Soundtrack.mp3";
     String pathToSoundClick = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\click.mp3";
-    Media soundTrack = new Media(new File(pathToSoundTrack).toURI().toString());
     Media soundClick = new Media(new File(pathToSoundClick).toURI().toString());
     DropShadow shadow = new DropShadow();
     Image background_white = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_white.jpg");
     Image background_black = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_black.jpg");
-    MediaPlayer mediaPlayer = new MediaPlayer(soundTrack);
     MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
-    private Scene menuScene;
-    private boolean isDarkTheme;
+    private final Scene menuScene;
+    private final boolean isDarkTheme;
     public MenuWithAI(Scene menuScene, boolean isDarkTheme) {
         this.menuScene = menuScene;
         this.isDarkTheme = isDarkTheme;

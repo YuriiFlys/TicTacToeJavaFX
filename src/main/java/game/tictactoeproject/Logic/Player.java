@@ -1,8 +1,8 @@
 package game.tictactoeproject.Logic;
 
 public class Player {
-    private String name;
-    private char sign;
+    private final String name;
+    private final char sign;
 
     public Player(String name, char sign) {
         this.name = name;

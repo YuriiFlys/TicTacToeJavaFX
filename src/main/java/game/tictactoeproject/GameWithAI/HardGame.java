@@ -23,27 +23,19 @@ import javafx.util.*;
 import java.io.File;
 
 public class HardGame extends Application {
-    String pathToSoundTrack = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\Soundtrack.mp3";
     String pathToSoundClick = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\click.mp3";
-
     Image background_white = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_white.jpg");
     Image background_black = new Image("file:D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\Background\\background_black.jpg");
-    // Create new ImageView objects with the background images
     ImageView backgroundImageView = new ImageView(background_white);
     ImageView backgroundImageView1 = new ImageView(background_black);
-
-    // Create a new GaussianBlur effect with the desired radius
     GaussianBlur blurEffect = new GaussianBlur(25);
-    Media soundTrack = new Media(new File(pathToSoundTrack).toURI().toString());
     Media soundClick = new Media(new File(pathToSoundClick).toURI().toString());
-
-    MediaPlayer mediaPlayer = new MediaPlayer(soundTrack);
     MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
     DropShadow shadow = new DropShadow();
-    private Scene menuScene;
+    private final Scene menuScene;
     Player player = new Player("Гравець", 'X');
     Player computer = new Player("Бот", 'O');
-    private boolean isDarkTheme;
+    private final boolean isDarkTheme;
     boolean isBotTurn = false;
     public HardGame(Scene menuScene, boolean isDarkTheme) {
         this.menuScene = menuScene;
@@ -51,15 +43,15 @@ public class HardGame extends Application {
     }
     Player currentPlayer = player;
     Timeline timeline1 = new Timeline();
-    private char[][] board = new char[3][3];
+    private final char[][] board = new char[3][3];
 
     private boolean gameOver = false;
     private int playerScore = 0;
     private int computerScore = 0;
     PauseTransition pause = new PauseTransition(Duration.seconds(3));
-    private Label statusLabel = new Label("Твій хід.");
-    private Label playerScoreLabel = new Label("Гравець: 0");
-    private Label computerScoreLabel = new Label("Бот: 0");
+    private final Label statusLabel = new Label("Твій хід.");
+    private final Label playerScoreLabel = new Label("Гравець: 0");
+    private final Label computerScoreLabel = new Label("Бот: 0");
     private void resetGame(Button[][] buttons) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {

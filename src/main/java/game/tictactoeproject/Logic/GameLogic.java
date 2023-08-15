@@ -15,10 +15,7 @@ public class GameLogic {
         if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != '\u0000') {
             return true;
         }
-        if (board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != '\u0000') {
-            return true;
-        }
-        return false;
+        return board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != '\u0000';
     }
     public static boolean isDraw(char[][] board) {
         for (int i = 0; i < 3; i++) {
