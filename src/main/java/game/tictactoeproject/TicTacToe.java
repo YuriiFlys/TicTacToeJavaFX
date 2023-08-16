@@ -234,6 +234,7 @@ public class TicTacToe extends Application {
                 playWithAIButton.setStyle("-fx-text-fill: black");
                 playWithFriend.setStyle("-fx-text-fill: black");
                 themeButton.setStyle("-fx-text-fill: black;");
+                leaderboardButton.setStyle("-fx-text-fill: black;");
                 isDarkTheme = false;
             } else {
                 titleLabel.setEffect(shadow);
@@ -244,12 +245,14 @@ public class TicTacToe extends Application {
                 playWithAIButton.setStyle("-fx-text-fill: white;-fx-background-color: black;-fx-border-color: white");
                 playWithFriend.setStyle("-fx-text-fill: white;-fx-background-color: black;-fx-border-color: white");
                 themeButton.setStyle("-fx-text-fill: white;-fx-background-color: black;-fx-border-color: white");
+                leaderboardButton.setStyle("-fx-text-fill: white;-fx-background-color: black;-fx-border-color: white");
                 isDarkTheme = true;
             }
         });
         playWithAIButton.setEffect(shadow);
         playWithFriend.setEffect(shadow);
         themeButton.setEffect(shadow);
+        leaderboardButton.setEffect(shadow);
         primaryStage.setScene(menuScene);
         primaryStage.show();
     }
