@@ -84,7 +84,11 @@ public class GameWithFriend extends Application {
     }
     public void saveGameResult() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("game_results_vs_player.txt", true))) {
-            writer.write(currentPlayer.getName() + " won the game against " + (currentPlayer == player1 ? player2.getName() : player1.getName()) + "\n");
+            if (getGameState(board)==GameState.DRAW){
+                writer.write("Draw between " + player1.getName() + " and " + player2.getName() + "\n");
+            }else{
+                writer.write(currentPlayer.getName() + " won the game against " + (currentPlayer == player1 ? player2.getName() : player1.getName()) + "\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -155,6 +159,7 @@ public class GameWithFriend extends Application {
                         } else if (getGameState(board)==GameState.DRAW){
                             turnLabel.setText("Нічия!");
                             gameOver = true;
+                            saveGameResult();
                         } else {
                             currentPlayer = (currentPlayer == player1) ? player2 : player1;
                             turnLabel.setText(currentPlayer.getName() + ", твій хід.");

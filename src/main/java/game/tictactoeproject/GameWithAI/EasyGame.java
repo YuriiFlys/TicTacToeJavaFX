@@ -2,7 +2,6 @@ package game.tictactoeproject.GameWithAI;
 import game.tictactoeproject.Logic.GameState;
 import game.tictactoeproject.Logic.GameLogic;
 import game.tictactoeproject.Logic.Player;
-import game.tictactoeproject.TicTacToe;
 import javafx.application.*;
 import javafx.geometry.*;
 import javafx.scene.*;
@@ -78,8 +77,12 @@ public class EasyGame extends Application {
 
     public void saveGameResult() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("game_results_vs_computer.txt", true))) {
-            String opponentName = (currentPlayer.getSign() == 'X') ? computer.getName() : nickname;
-            writer.write(currentPlayer.getName() + " won the game against " + opponentName + "\n");
+            if (getGameState(board)==GameState.DRAW) { // check if the game is a draw
+                writer.write("Draw between " + nickname + " and " + computer.getName() + "\n");
+            } else {
+                String opponentName = (currentPlayer.getSign() == 'X') ? computer.getName() : nickname;
+                writer.write(currentPlayer.getName() + " won the game against " + opponentName + "\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -159,6 +162,8 @@ public class EasyGame extends Application {
                         } else if (getGameState(board)==GameState.DRAW) {
                             statusLabel.setText("Нічия!");
                             gameOver = true;
+                            saveGameResult();
+
                             ;
                         } else {
                             currentPlayer = (currentPlayer == player) ? computer : player;
@@ -218,6 +223,8 @@ public class EasyGame extends Application {
                                     } else if (getGameState(board) == GameState.DRAW) {
                                         statusLabel.setText("Нічия!");
                                         gameOver = true;
+                                        saveGameResult();
+
 
                                     } else {
                                         currentPlayer = (currentPlayer == player) ? computer : player;

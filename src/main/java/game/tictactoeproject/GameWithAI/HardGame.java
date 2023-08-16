@@ -76,8 +76,12 @@ public class HardGame extends Application {
     }
     public void saveGameResult() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("game_results_vs_computer.txt", true))) {
-            String opponentName = (currentPlayer.getSign() == 'X') ? computer.getName() : nickname;
-            writer.write(currentPlayer.getName() + " won the game against " + opponentName + "\n");
+            if (getGameState(board)==GameState.DRAW) { // check if the game is a draw
+                writer.write("Draw between " + nickname + " and " + computer.getName() + "\n");
+            } else {
+                String opponentName = (currentPlayer.getSign() == 'X') ? computer.getName() : nickname;
+                writer.write(currentPlayer.getName() + " won the game against " + opponentName + "\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -183,6 +187,8 @@ public class HardGame extends Application {
                         } else if (getGameState(board)==GameState.DRAW) {
                             statusLabel.setText("Нічия!");
                             gameOver = true;
+                            saveGameResult();
+
                         } else {
                             currentPlayer = (currentPlayer == player)? computer : player;
                             if (currentPlayer.getSign() == 'O') {
@@ -241,6 +247,8 @@ public class HardGame extends Application {
                                     } else if (getGameState(board)==GameState.DRAW) {
                                         statusLabel.setText("Нічия!");
                                         gameOver = true;
+                                        saveGameResult();
+
                                     } else {
                                         currentPlayer = (currentPlayer == player)? computer : player;
                                         statusLabel.setText("Бот зробив хід, тепер твоя черга.");

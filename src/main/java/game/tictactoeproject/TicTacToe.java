@@ -44,11 +44,18 @@ public class TicTacToe extends Application {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" ");
-                String winner = parts[0];
-                String loser = parts[5];
-                wins.put(winner, wins.getOrDefault(winner, 0) + 1);
-                games.put(winner, games.getOrDefault(winner, 0) + 1);
-                games.put(loser, games.getOrDefault(loser, 0) + 1);
+                if (parts[0].equals("Draw")) {
+                    String player1 = parts[2];
+                    String player2 = parts[4];
+                    games.put(player1, games.getOrDefault(player1, 0) + 1);
+                    games.put(player2, games.getOrDefault(player2, 0) + 1);
+                } else {
+                    String winner = parts[0];
+                    String loser = parts[5];
+                    wins.put(winner, wins.getOrDefault(winner, 0) + 1);
+                    games.put(winner, games.getOrDefault(winner, 0) + 1);
+                    games.put(loser, games.getOrDefault(loser, 0) + 1);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,13 +72,13 @@ public class TicTacToe extends Application {
 
         leaderboard.sort((a, b) -> -Double.compare(a.getValue(), b.getValue()));
 
-        System.out.println("Leaderboard:");
+        System.out.println("Список лідерів:");
         for (Map.Entry<String, Double> entry : leaderboard) {
             String player = entry.getKey();
             double winRate = entry.getValue();
             int winCount = wins.getOrDefault(player, 0);
             int gameCount = games.get(player);
-            System.out.println(player + ": " + gameCount + " games played, " + winCount + " wins, "+ String.format("%.2f", winRate * 100) + "% win rate");
+            System.out.println(player + ": " + gameCount + " ігр зіграно, " + winCount + " перемог,"+ String.format("%.2f", winRate * 100) + "% вінрейт");
         }
     }
     public void showLeaderboardBot() {
@@ -83,12 +90,16 @@ public class TicTacToe extends Application {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(" ");
                 String winner = parts[0];
-                if (!winner.equals("Бот")) {
+                if (!winner.equals("Бот") && !winner.equals("Draw")) {
                     wins.put(winner, wins.getOrDefault(winner, 0) + 1);
                     games.put(winner, games.getOrDefault(winner, 0) + 1);
                 }
-                if(winner.equals("Бот")) {
+                if(winner.equals("Бот") && !winner.equals("Draw")) {
                     String loser = parts[5];
+                    games.put(loser, games.getOrDefault(loser, 0) + 1);
+                }
+                if (winner.equals("Draw")) {
+                    String loser = parts[2];
                     games.put(loser, games.getOrDefault(loser, 0) + 1);
                 }
             }
@@ -107,13 +118,13 @@ public class TicTacToe extends Application {
 
         leaderboard1.sort((a, b) -> -Double.compare(a.getValue(), b.getValue()));
 
-        System.out.println("Leaderboard:");
+        System.out.println("Список лідерів:");
         for (Map.Entry<String, Double> entry : leaderboard1) {
             String player = entry.getKey();
             double winRate = entry.getValue();
             int winCount = wins.getOrDefault(player, 0);
             int gameCount = games.get(player);
-            System.out.println(player + ": " + gameCount + " games played, " + winCount + " wins,"+ String.format("%.2f", winRate * 100) + "% win rate");
+            System.out.println(player + ": " + gameCount + " ігр зіграно, " + winCount + " перемог,"+ String.format("%.2f", winRate * 100) + "% вінрейт");
         }
     }
 
