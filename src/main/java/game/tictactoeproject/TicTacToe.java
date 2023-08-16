@@ -144,9 +144,9 @@ public class TicTacToe extends Application {
         leaderboardButton.setFont(Font.font("Arial", FontWeight.BOLD, 22));
         leaderboardButton.setOnAction(event -> {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Choose the leaderboard:");
-            System.out.println("[1] Leaderboard against player");
-            System.out.println("[2] Leaderboard against bot");
+            System.out.println("Виберіть список лідерів:");
+            System.out.println("[1] Список лідерів проти гравців");
+            System.out.println("[2] Список лідерів проти бота");
 
             int choice = scanner.nextInt();
             if (choice == 1) {
@@ -154,7 +154,7 @@ public class TicTacToe extends Application {
             } else if (choice == 2) {
                 showLeaderboardBot();
             } else {
-                System.out.println("Invalid choice");
+                System.out.println("Неправильно введено число");
             }
 
         });
