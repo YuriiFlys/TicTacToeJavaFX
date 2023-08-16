@@ -20,7 +20,11 @@ import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.util.Duration;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Optional;
 
 
 public class GameWithFriend extends Application {
@@ -32,6 +36,8 @@ public class GameWithFriend extends Application {
     ImageView backgroundImageView = new ImageView(background_white);
     ImageView backgroundImageView1 = new ImageView(background_black);
     GaussianBlur blurEffect = new GaussianBlur(25);
+    private String nickname1;
+    private String nickname2;
     private final Scene aiMenuScene;
     private final boolean isDarkTheme;
     public GameWithFriend(Scene aiMenuScene, boolean isDarkTheme) {
@@ -39,18 +45,50 @@ public class GameWithFriend extends Application {
         this.isDarkTheme = isDarkTheme;
     }
     private final char[][] board = new char[3][3];
-    Player player1 = new Player("Гравець 1", 'X');
-    Player player2 = new Player("Гравець 2", 'O');
+    Player player1 = new Player(nickname1, 'X');
+    Player player2 = new Player(nickname2, 'O');
     Player currentPlayer = player1;
     private boolean gameOver = false;
     DropShadow shadow = new DropShadow();
 
     private final Label turnLabel = new Label(currentPlayer.getName() + ", твій хід.");
-    private final Label player1ScoreLabel = new Label("Гравець 1: 0");
-    private final Label player2ScoreLabel = new Label("Гравець 2: 0");
+    private final Label player1ScoreLabel = new Label(nickname1+ ": 0");
+    private final Label player2ScoreLabel = new Label(nickname2+ ": 0");
     private int player1Score = 0;
     private int player2Score = 0;
+    public void startGame() {
+        TextInputDialog dialog1 = new TextInputDialog();
+        dialog1.setTitle("Введіть нікнейм першого гравця");
+        dialog1.setHeaderText(null);
+        dialog1.setContentText("Нікнейм:");
 
+        Optional<String> result = dialog1.showAndWait();
+        if (result.isPresent()) {
+            nickname1 = result.get();
+            player1ScoreLabel.setText(nickname1 + ": 0");
+            player1= new Player(nickname1, 'X');
+            currentPlayer = player1;
+            turnLabel.setText(nickname1 + ", твій хід.");
+        }
+        TextInputDialog dialog2 = new TextInputDialog();
+        dialog2.setTitle("Введіть нікнейм другого гравця");
+        dialog2.setHeaderText(null);
+        dialog2.setContentText("Нікнейм:");
+
+        Optional<String> result2 = dialog2.showAndWait();
+        if (result2.isPresent()) {
+            nickname2 = result2.get();
+            player2ScoreLabel.setText(nickname2 + ": 0");
+            player2= new Player(nickname2, 'O');
+        }
+    }
+    public void saveGameResult() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("game_results_vs_player.txt", true))) {
+            writer.write(currentPlayer.getName() + " won the game against " + (currentPlayer == player1 ? player2.getName() : player1.getName()) + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void resetGame(Button[][] buttons) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -60,7 +98,7 @@ public class GameWithFriend extends Application {
         }
         currentPlayer = player1;
         gameOver = false;
-        turnLabel.setText("Гравець 1, твій хід.");
+        turnLabel.setText(nickname1+ ", твій хід.");
     }
     public GameState getGameState(char[][] board) {
         if (GameLogic.checkWinner(board)) {
@@ -78,6 +116,7 @@ public class GameWithFriend extends Application {
     }
     @Override
     public void start(Stage primaryStage) {
+        startGame();
         GridPane grid = new GridPane();
         Button[][] buttons = new Button[3][3];
         for (int i = 0; i < 3; i++) {
@@ -103,13 +142,14 @@ public class GameWithFriend extends Application {
 
                         if (getGameState(board) == GameState.X_WON || getGameState(board) == GameState.O_WON) {
                             turnLabel.setText(currentPlayer.getName() + " переміг!");
+                            saveGameResult();
                             if (currentPlayer.getSign() == 'X') {
                                 player1Score++;
-                                player1ScoreLabel.setText("Гравець 1: " + player1Score);
+                                player1ScoreLabel.setText(nickname1 +": " + player1Score);
 
                             } else {
                                 player2Score++;
-                                player2ScoreLabel.setText("Гравець 2: " + player2Score);
+                                player2ScoreLabel.setText(nickname2 +": " + player2Score);
                             }
                             gameOver = true;
                         } else if (getGameState(board)==GameState.DRAW){
@@ -154,8 +194,8 @@ public class GameWithFriend extends Application {
             timeline.play();
             player1Score = 0;
             player2Score = 0;
-            player1ScoreLabel.setText("Гравець 1: " + player1Score);
-            player2ScoreLabel.setText("Гравець 2: " + player2Score);
+            player1ScoreLabel.setText(nickname1 +": " + player1Score);
+            player2ScoreLabel.setText(nickname2 +": " + player2Score);
         });
 
         Button backButton = new Button("Назад");

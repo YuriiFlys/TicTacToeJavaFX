@@ -15,8 +15,14 @@ import javafx.scene.text.*;
 import javafx.stage.*;
 import javafx.scene.media.*;
 import javafx.util.Duration;
-import java.io.File;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+
+;
 public class TicTacToe extends Application {
     private boolean isDarkTheme = false;
     public static boolean isEnglish = false;
@@ -30,6 +36,86 @@ public class TicTacToe extends Application {
     MediaPlayer mediaPlayer = new MediaPlayer(soundTrack);
     MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
     DropShadow shadow = new DropShadow();
+    public void showLeaderboardPlayers() {
+        Map<String, Integer> wins = new HashMap<>();
+        Map<String, Integer> games = new HashMap<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("game_results_vs_player.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" ");
+                String winner = parts[0];
+                String loser = parts[5];
+                wins.put(winner, wins.getOrDefault(winner, 0) + 1);
+                games.put(winner, games.getOrDefault(winner, 0) + 1);
+                games.put(loser, games.getOrDefault(loser, 0) + 1);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        List<Map.Entry<String, Double>> leaderboard = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : games.entrySet()) {
+            String player = entry.getKey();
+            int winCount = wins.getOrDefault(player, 0);
+            int gameCount = entry.getValue();
+            double winRate = (double) winCount / gameCount;
+            leaderboard.add(new AbstractMap.SimpleEntry<>(player, winRate));
+        }
+
+        leaderboard.sort((a, b) -> -Double.compare(a.getValue(), b.getValue()));
+
+        System.out.println("Leaderboard:");
+        for (Map.Entry<String, Double> entry : leaderboard) {
+            String player = entry.getKey();
+            double winRate = entry.getValue();
+            int winCount = wins.getOrDefault(player, 0);
+            int gameCount = games.get(player);
+            System.out.println(player + ": " + gameCount + " games played, " + winCount + " wins, "+ String.format("%.2f", winRate * 100) + "% win rate");
+        }
+    }
+    public void showLeaderboardBot() {
+        Map<String, Integer> wins = new HashMap<>();
+        Map<String, Integer> games = new HashMap<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("game_results_vs_computer.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(" ");
+                String winner = parts[0];
+                if (!winner.equals("Бот")) {
+                    wins.put(winner, wins.getOrDefault(winner, 0) + 1);
+                    games.put(winner, games.getOrDefault(winner, 0) + 1);
+                }
+                if(winner.equals("Бот")) {
+                    String loser = parts[5];
+                    games.put(loser, games.getOrDefault(loser, 0) + 1);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        List<Map.Entry<String, Double>> leaderboard1 = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : games.entrySet()) {
+            String player = entry.getKey();
+            int winCount = wins.getOrDefault(player, 0);
+            int gameCount = entry.getValue();
+            double winRate = (double) winCount / gameCount;
+            leaderboard1.add(new AbstractMap.SimpleEntry<>(player, winRate));
+        }
+
+        leaderboard1.sort((a, b) -> -Double.compare(a.getValue(), b.getValue()));
+
+        System.out.println("Leaderboard:");
+        for (Map.Entry<String, Double> entry : leaderboard1) {
+            String player = entry.getKey();
+            double winRate = entry.getValue();
+            int winCount = wins.getOrDefault(player, 0);
+            int gameCount = games.get(player);
+            System.out.println(player + ": " + gameCount + " games played, " + winCount + " wins,"+ String.format("%.2f", winRate * 100) + "% win rate");
+        }
+    }
 
     public void start(Stage primaryStage) {
 
@@ -52,7 +138,26 @@ public class TicTacToe extends Application {
         themeButton.setMinWidth(200);
         themeButton.setMinHeight(50);
         themeButton.setFont(Font.font("Arial", FontWeight.BOLD, 22));
-        Button languageButton = new Button("Змінити мову");
+        Button leaderboardButton = new Button("Список лідерів");
+        leaderboardButton.setMinWidth(200);
+        leaderboardButton.setMinHeight(50);
+        leaderboardButton.setFont(Font.font("Arial", FontWeight.BOLD, 22));
+        leaderboardButton.setOnAction(event -> {
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Choose the leaderboard:");
+            System.out.println("[1] Leaderboard against player");
+            System.out.println("[2] Leaderboard against bot");
+
+            int choice = scanner.nextInt();
+            if (choice == 1) {
+                showLeaderboardPlayers();
+            } else if (choice == 2) {
+                showLeaderboardBot();
+            } else {
+                System.out.println("Invalid choice");
+            }
+
+        });
         Label projectLabel = new Label("Project by Yurii Flys");
         projectLabel.setFont(Font.font("Arial", FontWeight.BOLD, 15));
         projectLabel.setStyle("-fx-text-fill: black");
@@ -60,9 +165,7 @@ public class TicTacToe extends Application {
         VBox menuBox = new VBox();
         menuBox.setAlignment(Pos.CENTER);
         menuBox.setSpacing(10);
-        menuBox.getChildren().addAll(titleLabel, playWithAIButton,playWithFriend, themeButton,projectLabel);
-
-
+        menuBox.getChildren().addAll(titleLabel, playWithAIButton,playWithFriend, themeButton,leaderboardButton,projectLabel);
 
         Scene menuScene = new Scene(menuBox, 700, 600);
         BackgroundImage background = new BackgroundImage(
@@ -120,7 +223,6 @@ public class TicTacToe extends Application {
                 playWithAIButton.setStyle("-fx-text-fill: black");
                 playWithFriend.setStyle("-fx-text-fill: black");
                 themeButton.setStyle("-fx-text-fill: black;");
-                languageButton.setStyle("-fx-text-fill: black;");
                 isDarkTheme = false;
             } else {
                 titleLabel.setEffect(shadow);

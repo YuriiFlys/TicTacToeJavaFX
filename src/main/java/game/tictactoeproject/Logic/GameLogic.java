@@ -1,4 +1,9 @@
 package game.tictactoeproject.Logic;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 public class GameLogic {
 
@@ -15,7 +20,11 @@ public class GameLogic {
         if (board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != '\u0000') {
             return true;
         }
-        return board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != '\u0000';
+
+        if(board[0][2] == board[1][1] && board[1][1] == board[2][0] && board[0][2] != '\u0000'){
+            return true;
+        }
+        return false;
     }
     public static boolean isDraw(char[][] board) {
         for (int i = 0; i < 3; i++) {
@@ -27,6 +36,13 @@ public class GameLogic {
         }
         return true;
     }
-
+    public static Button createButton(String text, EventHandler<ActionEvent> eventHandler) {
+        Button button = new Button(text);
+        button.setMinWidth(200);
+        button.setMinHeight(50);
+        button.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        button.setOnAction(eventHandler);
+        return button;
+    }
 
 }

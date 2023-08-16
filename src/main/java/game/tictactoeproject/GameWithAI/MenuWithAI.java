@@ -1,4 +1,6 @@
 package game.tictactoeproject.GameWithAI;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,8 +14,11 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
+
+import static game.tictactoeproject.Logic.GameLogic.createButton;
 
 public class MenuWithAI extends Application {
     String pathToSoundClick = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\click.mp3";
@@ -34,18 +39,38 @@ public class MenuWithAI extends Application {
         Label titleLabel = new Label("Вибери складність:");
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 32));
         titleLabel.setStyle("-fx-text-fill: black");
-        Button easyButton = new Button("Легка");
-        easyButton.setMinWidth(200);
-        easyButton.setMinHeight(50);
-        easyButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        Button hardButton = new Button("Важка");
-        hardButton.setMinWidth(200);
-        hardButton.setMinHeight(50);
-        hardButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        Button backButton = new Button("Назад");
-        backButton.setMinWidth(200);
-        backButton.setMinHeight(50);
-        backButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        Button easyButton = createButton("Легко", event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
+            EasyGame game = new EasyGame(menuScene, isDarkTheme);
+            game.start(primaryStage);
+        });
+        Button hardButton = createButton("Складно", event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
+            HardGame game = new HardGame(menuScene, isDarkTheme);
+            game.start(primaryStage);
+        });
+        Button backButton = createButton("Назад", event -> {
+            mediaPlayerClick.setVolume(0.2);
+            mediaPlayerClick.stop();
+            mediaPlayerClick.play();
+            Timeline timeline = new Timeline(new KeyFrame(
+                    Duration.millis(1),
+                    ae -> mediaPlayerClick.play()));
+            timeline.play();
+            primaryStage.setScene(menuScene);
+        });
         VBox menuBox = new VBox();
         menuBox.setAlignment(Pos.CENTER);
         menuBox.setSpacing(10);
@@ -67,27 +92,6 @@ public class MenuWithAI extends Application {
         menuBox.setBackground(new Background(background));
         Scene aiMenuScene = new Scene(menuBox, 700, 600);
 
-        easyButton.setOnAction(event -> {
-            mediaPlayerClick.setVolume(0.2);
-            mediaPlayerClick.stop();
-            mediaPlayerClick.play();
-            EasyGame game = new EasyGame(aiMenuScene, isDarkTheme);
-            game.start(primaryStage);
-        });
-        hardButton.setOnAction(event -> {
-            mediaPlayerClick.setVolume(0.2);
-            mediaPlayerClick.stop();
-            mediaPlayerClick.play();
-            HardGame game = new HardGame(aiMenuScene, isDarkTheme);
-            game.start(primaryStage);
-        });
-        backButton.setOnAction(event -> {
-            mediaPlayerClick.setVolume(0.2);
-            mediaPlayerClick.stop();
-            mediaPlayerClick.play();
-            primaryStage.setScene(menuScene);
-            primaryStage.show();
-        });
         if(isDarkTheme){
             menuBox.setBackground(new Background(background1));
             titleLabel.setStyle("-fx-text-fill: white");

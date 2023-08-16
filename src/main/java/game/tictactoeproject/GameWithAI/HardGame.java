@@ -20,7 +20,13 @@ import javafx.stage.*;
 import javafx.animation.*;
 import javafx.util.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Optional;
+
+import static game.tictactoeproject.Logic.GameLogic.createButton;
 
 public class HardGame extends Application {
     String pathToSoundClick = "D:\\Java(Homework)\\TicTacToeProject\\src\\main\\java\\game\\tictactoeproject\\SoundTrack\\click.mp3";
@@ -33,7 +39,7 @@ public class HardGame extends Application {
     MediaPlayer mediaPlayerClick = new MediaPlayer(soundClick);
     DropShadow shadow = new DropShadow();
     private final Scene menuScene;
-    Player player = new Player("Гравець", 'X');
+
     Player computer = new Player("Бот", 'O');
     private final boolean isDarkTheme;
     boolean isBotTurn = false;
@@ -41,7 +47,6 @@ public class HardGame extends Application {
         this.menuScene = menuScene;
         this.isDarkTheme = isDarkTheme;
     }
-    Player currentPlayer = player;
     Timeline timeline1 = new Timeline();
     private final char[][] board = new char[3][3];
 
@@ -50,8 +55,11 @@ public class HardGame extends Application {
     private int computerScore = 0;
     PauseTransition pause = new PauseTransition(Duration.seconds(3));
     private final Label statusLabel = new Label("Твій хід.");
-    private final Label playerScoreLabel = new Label("Гравець: 0");
+    private String nickname;
+    private final Label playerScoreLabel = new Label(nickname + ": 0");
     private final Label computerScoreLabel = new Label("Бот: 0");
+    Player player = new Player(nickname, 'X');
+    Player currentPlayer = player;
     private void resetGame(Button[][] buttons) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -63,6 +71,31 @@ public class HardGame extends Application {
         gameOver = false;
         isBotTurn = false;
         statusLabel.setText("Твій хід.");
+
+
+    }
+    public void saveGameResult() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("game_results_vs_computer.txt", true))) {
+            String opponentName = (currentPlayer.getSign() == 'X') ? computer.getName() : nickname;
+            writer.write(currentPlayer.getName() + " won the game against " + opponentName + "\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startGame() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Введіть свій нікнейм");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Нікнейм:");
+
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            nickname = result.get();
+            playerScoreLabel.setText(nickname + ": 0");
+            player = new Player(nickname, 'X');
+            currentPlayer = player;
+        }
     }
 
     public GameState getGameState(char[][] board) {
@@ -106,6 +139,7 @@ public class HardGame extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        startGame();
         GridPane grid = new GridPane();
         Button[][] buttons = new Button[3][3];
         for (int i = 0; i < 3; i++) {
@@ -133,15 +167,19 @@ public class HardGame extends Application {
                             button.setStyle("-fx-text-fill: red;-fx-background-color: black;-fx-border-color: white");
                         }
                         if (getGameState(board)==GameState.X_WON || getGameState(board)==GameState.O_WON) {
+
                             statusLabel.setText(currentPlayer.getName() + " переміг!");
+
                             if (currentPlayer.getSign() == 'X') {
                                 playerScore++;
                                 playerScoreLabel.setText("Гравець: " + playerScore);
                             } else {
+
                                 computerScore++;
                                 computerScoreLabel.setText("Бот: " + computerScore);
                             }
                             gameOver = true;
+                            saveGameResult();
                         } else if (getGameState(board)==GameState.DRAW) {
                             statusLabel.setText("Нічия!");
                             gameOver = true;
@@ -158,8 +196,6 @@ public class HardGame extends Application {
                                 timeline1.setCycleCount(Animation.INDEFINITE);
                                 timeline1.play();
                                 pause.setOnFinished(event1 -> {
-                                    // Тут розміщуємо код, який буде виконаний після закінчення затримки
-                                    // Наприклад, хід бота
                                     int bestScore = Integer.MIN_VALUE;
                                     int bestMoveI = -1;
                                     int bestMoveJ = -1;
@@ -201,6 +237,7 @@ public class HardGame extends Application {
                                             computerScoreLabel.setText("Бот: " + computerScore);
                                         }
                                         gameOver = true;
+                                        saveGameResult();
                                     } else if (getGameState(board)==GameState.DRAW) {
                                         statusLabel.setText("Нічия!");
                                         gameOver = true;
@@ -210,8 +247,6 @@ public class HardGame extends Application {
                                         isBotTurn = false;
                                     }
                                 });
-
-                                // Запускаємо анімацію затримки
                                 pause.play();
                             }
                         }
@@ -221,11 +256,7 @@ public class HardGame extends Application {
                 buttons[i][j] = button;
             }
         }
-        Button resetButton = new Button("Рестарт");
-        resetButton.setMinWidth(200);
-        resetButton.setMinHeight(50);
-        resetButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        resetButton.setOnAction(event -> {
+        Button resetButton = createButton("Рестарт", event -> {
             mediaPlayerClick.setVolume(0.2);
             mediaPlayerClick.stop();
             mediaPlayerClick.play();
@@ -233,14 +264,13 @@ public class HardGame extends Application {
                     Duration.millis(1),
                     ae -> mediaPlayerClick.play()));
             timeline.play();
-                    resetGame(buttons);
-                });
-
-        Button resetScoreButton = new Button("Обнулення");
-        resetScoreButton.setMinWidth(200);
-        resetScoreButton.setMinHeight(50);
-        resetScoreButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        resetScoreButton.setOnAction(event -> {
+            gameOver = false;
+            currentPlayer = player;
+            statusLabel.setText("Твоя черга.");
+            resetGame(buttons);
+        });
+        resetButton.setEffect(shadow);
+        Button resetScoreButton = createButton("Обнулення", event -> {
             mediaPlayerClick.setVolume(0.2);
             mediaPlayerClick.stop();
             mediaPlayerClick.play();
@@ -250,15 +280,11 @@ public class HardGame extends Application {
             timeline.play();
             playerScore = 0;
             computerScore = 0;
-            playerScoreLabel.setText("Гравець: " + playerScore);
+            playerScoreLabel.setText(nickname + ": " + playerScore);
             computerScoreLabel.setText("Бот: " + computerScore);
         });
 
-        Button backButton = new Button("Назад");
-        backButton.setMinWidth(200);
-        backButton.setMinHeight(50);
-        backButton.setFont(Font.font("Arial", FontWeight.BOLD, 24));
-        backButton.setOnAction(event -> {
+        Button backButton = createButton("Назад", event -> {
             mediaPlayerClick.setVolume(0.2);
             mediaPlayerClick.stop();
             mediaPlayerClick.play();
